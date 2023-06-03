@@ -8,7 +8,7 @@ client_secret = 'a4981a3376d3475a98900869897fff58'
 
 # Request user input for the usernames of people whom want to compare playlists.
 # Username for person 1
-'''
+
 try:
     username1 = input('Enter the username: ')
 except IOError:
@@ -19,9 +19,9 @@ try:
     username2 = input('Enter the second username: ')
 except IOError:
     print('Error with username two.')
-'''
-username1 = 'saimmatloob'
-username2 = 'melissa-73'
+
+# username1 = ''
+# username2 = ''
 
 
 # Authenticate with the Spotify API
