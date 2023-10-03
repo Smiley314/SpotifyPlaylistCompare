@@ -40,9 +40,6 @@ for playlist in playlists:
     print(playlist_name, playlist_id)
 '''
 
-# Array to hold the list of playlists each user has
-user1 = []
-user2 = []
 
 # Access and print playlist details
 playlists = sp.user_playlists(username1)
@@ -61,38 +58,48 @@ def userinput():
     return playlistnum
 
 
-# print a list of the playlists user 1
-for i, playlist in enumerate(playlists['items'], start=1):
-    if not playlist['public']:
-        continue  # Skip if playlist is not public
-    playlist_name = playlist['name']
-    playlist_id = playlist['id']
-    user1.append(playlist_id)
-    print(f"{i}. {playlist_name} ({playlist_id})")
-
-# Ask for the playlist of interest from the list of playlist of user 1
-while True:
+def playlistOutput(playlists):
+    user = []
+    for i, playlist in enumerate(playlists['items'], start=1):
+        if not playlist['public']:
+            continue  # Skip if playlist is not public
+        playlist_name = playlist['name']
+        playlist_id = playlist['id']
+        user.append(playlist_id)
+        print(f"{i}. {playlist_name} ({playlist_id})")
+    return user
+              
+def playlistSelection(playlist):
     playlistNum = userinput()
-    if 0 < int(playlistNum) <= len(playlist):
-        break
-    print('The playlist number you selected is not in range.')
+    while True:
+        if 0 < int(playlistNum) <= len(playlist):
+            break
+        print('The playlist number you selected is not in range.')
+    return playlistNum
+
+def getPlaylist(id):
+    playlist = sp.playlist(id)
+    return playlist
+
+def printSongs(playlist,print=True):
+    songs = []
+    for track in playlist['tracks']['items']:
+        song_name = track['track']['name']
+        artist_name = track['track']['artists'][0]['name']
+        songs.append(song_name)
+        if print:
+            print(song_name, 'by', artist_name)
+    return songs
+
+# user 1
+user1 = playlistOutput(playlists)
+playlistNum = playlistSelection(playlists)
+
+# user 2 
+user2 = playlistOutput(playlists2)
+playlistNum2 = playlistSelection(playlists2)
 
 
-# print the list of playlists for user 2
-for i, playlist in enumerate(playlists2['items'], start=1):
-    if not playlist['public']:
-        continue  # Skip if playlist is not public
-    playlist_name = playlist['name']
-    playlist_id = playlist['id']
-    user2.append(playlist_id)
-    print(f"{i}. {playlist_name} ({playlist_id})")
-
-# Ask for the playlist of interest from the list of playlists of user 2
-while True:
-    playlistNum2 = userinput()
-    if 0 < int(playlistNum2) <= len(playlists2):
-        break
-    print('The playlist number you selected is not in range.')
 
 
 # Define the playlist ID
@@ -101,23 +108,12 @@ playlist_id = user1[int(playlistNum)-1]
 playlist_id2 = user2[int(playlistNum2)-1]
 
 # Step 7: Retrieve the playlist by its ID
-playlist = sp.playlist(playlist_id)
-playlist2 = sp.playlist(playlist_id2)
+playlist = getPlaylist(playlist_id)
+playlist2 = getPlaylist(playlist_id2)
 
-# Step 8: Access and print the songs in the playlist
-user1Songs = []
-user2songs = []
-for track in playlist['tracks']['items']:
-    song_name = track['track']['name']
-    artist_name = track['track']['artists'][0]['name']
-    user1Songs.append(song_name)
-    # print(song_name, 'by', artist_name)
+user1Songs = printSongs(playlist, False)
 
-for track in playlist2['tracks']['items']:
-    song_name = track['track']['name']
-    artist_name = track['track']['artists'][0]['name']
-    user2songs.append(song_name)
-    # print(song_name, 'by', artist_name)
+user2songs = printSongs(playlist2, False)
 
 
 set1 = set(user1Songs)
